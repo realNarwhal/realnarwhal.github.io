@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
+<link rel="manifest" href="manifest.webmanifest">
+<title>My Sports Records</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#151d30;--line:#29344b;--muted:#9ba9c2;--text:#f4f7ff;--accent:#8fc5ff}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#0b1020,#111a2c);color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
+main{max-width:720px;margin:auto;padding:calc(24px + env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom))}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}h1{font-size:clamp(25px,6vw,34px);line-height:1.1;margin:0 0 7px;letter-spacing:-.03em}.sub{color:var(--muted);margin:0;font-size:14px}
+button{border:1px solid #3b4c6b;background:#1b2a42;color:var(--text);padding:10px 12px;border-radius:10px;font:inherit;cursor:pointer}button:disabled{opacity:.5}
+.list{display:grid;gap:10px}.item{display:flex;align-items:center;gap:13px;padding:15px;background:rgba(21,29,48,.97);border:1px solid var(--line);border-radius:14px;min-height:76px}
+.logo{width:42px;height:42px;display:grid;place-items:center;flex:none;background:#24314a;border-radius:12px;font-size:12px;font-weight:800;color:#d9e8ff}
+.name{font-weight:680}.league{font-size:12px;color:var(--muted);margin-top:2px}.record{margin-left:auto;text-align:right;font-size:25px;font-weight:750;letter-spacing:-.03em;font-variant-numeric:tabular-nums;white-space:nowrap}.record small{display:block;font-size:11px;font-weight:500;color:var(--muted);letter-spacing:0}
+#status{margin-top:17px;color:var(--muted);font-size:12px}.bottom{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin-top:8px}
+@media(max-width:400px){main{padding-left:11px;padding-right:11px}.item{padding:12px;gap:10px}.logo{width:36px;height:36px}.record{font-size:22px}}
+</style>
+</head>
+<body><main>
+<header><div><h1>My Sports Records</h1><p class="sub">Your favorites. One page. No feed.</p></div><button id="refresh">↻ Refresh</button></header>
+<section class="list" aria-label="Favorite records">
+<article class="item"><div class="logo">TOR</div><div><div class="name">Toronto Blue Jays</div><div class="league">MLB · Regular season</div></div><div class="record" id="jays">Loading…<small>W–L</small></div></article>
+<article class="item"><div class="logo">BUF</div><div><div class="name">Buffalo Bills</div><div class="league">NFL · Regular season</div></div><div class="record" id="bills">Loading…<small>W–L–T</small></div></article>
+<article class="item"><div class="logo">BUF</div><div><div class="name">Buffalo Sabres</div><div class="league">NHL · Regular season</div></div><div class="record" id="sabres">Loading…<small>W–L–OTL</small></div></article>
+<article class="item"><div class="logo">BOS</div><div><div class="name">Boston Celtics</div><div class="league">NBA · Regular season</div></div><div class="record" id="celtics">Loading…<small>W–L</small></div></article>
+<article class="item"><div class="logo">WVU</div><div><div class="name">West Virginia Mountaineers</div><div class="league">College football · Regular season</div></div><div class="record" id="wvu">Loading…<small>W–L</small></div></article>
+<article class="item"><div class="logo">12</div><div><div class="name">Ryan Blaney</div><div class="league">NASCAR Cup Series · Season wins</div></div><div class="record" id="blaney">3<small>wins · manual</small></div></article>
+</section>
+<div id="status" role="status">Connecting to sports data…</div>
+<div class="bottom"><span>Refreshes every 30 minutes</span><span id="updated">Last checked: —</span></div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const leagues=[
+ {id:"jays",sport:"baseball",league:"mlb",team:"Toronto Blue Jays",short:"W–L"},
+ {id:"bills",sport:"football",league:"nfl",team:"Buffalo Bills",short:"W–L–T"},
+ {id:"sabres",sport:"hockey",league:"nhl",team:"Buffalo Sabres",short:"W–L–OTL"},
+ {id:"celtics",sport:"basketball",league:"nba",team:"Boston Celtics",short:"W–L"},
+ {id:"wvu",sport:"football",league:"college-football",team:"West Virginia Mountaineers",short:"W–L"}
+];
+function getStat(entry,names){const stats=entry?.stats||[];const s=stats.find(x=>names.includes(String(x.name||"").toLowerCase())||names.includes(String(x.abbreviation||"").toLowerCase()));return s?.value??null}
+function searchEntries(obj,teamName,found=[]){
+ if(!obj||typeof obj!=="object")return found;
+ if(obj.team&&typeof obj.team==="object"&&obj.stats&&Array.isArray(obj.stats)){
+  const n=(obj.team.displayName||obj.team.name||"").toLowerCase();
+  if(n===teamName.toLowerCase()||n.includes(teamName.toLowerCase())||teamName.toLowerCase().includes(n))found.push(obj);
+ }
+ if(Array.isArray(obj)){for(const v of obj)searchEntries(v,teamName,found)}
+ else {for(const [k,v] of Object.entries(obj)){if(k!=="team"||!obj.stats)searchEntries(v,teamName,found)}}
+ return found;
+}
+function formatEntry(e,item){
+ const w=getStat(e,["wins","w"]),l=getStat(e,["losses","l"]);
+ const ties=getStat(e,["ties","t"]),otl=getStat(e,["ot losses","otlosses","otl"]);
+ if(w==null||l==null)return null;
+ if(item.id==="sabres")return `${w}–${l}–${otl??0}`;
+ if(item.id==="bills"&&ties!=null&&Number(ties)>0)return `${w}–${l}–${ties}`;
+ return `${w}–${l}`;
+}
+async function load(item){
+ const el=$(item.id);
+ try{
+  const url=`https://site.api.espn.com/apis/v2/sports/${item.sport}/${item.league}/standings`;
+  const res=await fetch(url,{cache:"no-store"});
+  if(!res.ok)throw Error("HTTP "+res.status);
+  const data=await res.json();
+  const entries=searchEntries(data,item.team);
+  const match=entries.find(e=>(e.team?.displayName||"").toLowerCase()===item.team.toLowerCase())||entries[0];
+  const value=match&&formatEntry(match,item);
+  if(!value)throw Error("Record not found");
+  el.innerHTML=`${value}<small>${item.short}</small>`;
+  return true;
+ }catch(err){
+  el.innerHTML=`Unavailable<small>couldn't load data</small>`;
+  return false;
+ }
+}
+let busy=false;
+async function refresh(){
+ if(busy)return;busy=true;$("refresh").disabled=true;$("status").textContent="Updating team records…";
+ const results=await Promise.all(leagues.map(load));
+ const count=results.filter(Boolean).length;
+ $("updated").textContent="Last checked: "+new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
+ $("status").textContent=count===5?"All five team records loaded. Ryan Blaney stays at 3 wins until you change it.":`${count} of 5 team records loaded. If all rows fail, the host or data provider may be blocking requests.`;
+ $("refresh").disabled=false;busy=false;
+}
+$("refresh").addEventListener("click",refresh);
+if("serviceWorker" in navigator && location.protocol.startsWith("http"))navigator.serviceWorker.register("./sw.js").catch(()=>{});
+refresh();setInterval(refresh,30*60*1000);
+</script></body></html>
