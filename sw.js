@@ -1,4 +1,4 @@
-const CACHE_NAME = "narwhal-favorite-teams-shell-v2";
+const CACHE_NAME = "mysports-hq-shell-v3";
 const APP_URL = new URL("./", self.registration.scope).href;
 const APP_SHELL = [
   APP_URL,
@@ -18,7 +18,7 @@ self.addEventListener("install", event => {
 self.addEventListener("activate", event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.filter(key => key.startsWith("narwhal-favorite-teams-shell-") && key !== CACHE_NAME).map(key => caches.delete(key)));
+    await Promise.all(keys.filter(key => key.startsWith("mysports-hq-shell-") && key !== CACHE_NAME).map(key => caches.delete(key)));
     await self.clients.claim();
   })());
 });
@@ -55,3 +55,4 @@ self.addEventListener("fetch", event => {
     return response;
   })());
 });
+
