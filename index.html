@@ -1,542 +1,329 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b1020">
-  <title>My Sports Records</title>
-
-  <style>
-    :root {
-      color-scheme: dark;
-      --bg: #0b1020;
-      --panel: #151d30;
-      --line: #29344b;
-      --muted: #9ba9c2;
-      --text: #f4f7ff;
-      --accent: #8fc5ff;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: linear-gradient(145deg, #0b1020, #111a2c);
-      color: var(--text);
-      font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-    }
-
-    main {
-      max-width: 720px;
-      margin: auto;
-      padding: 28px 14px 36px;
-    }
-
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 22px;
-    }
-
-    h1 {
-      font-size: clamp(25px, 6vw, 34px);
-      line-height: 1.1;
-      margin: 0 0 7px;
-      letter-spacing: -.03em;
-    }
-
-    .subtitle {
-      color: var(--muted);
-      margin: 0;
-      font-size: 14px;
-    }
-
-    button {
-      border: 1px solid #3b4c6b;
-      background: #1b2a42;
-      color: var(--text);
-      padding: 10px 12px;
-      border-radius: 10px;
-      font: inherit;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    button:disabled { opacity: .5; }
-
-    .list {
-      display: grid;
-      gap: 10px;
-    }
-
-    .item {
-      display: flex;
-      align-items: center;
-      gap: 13px;
-      padding: 15px;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      min-height: 78px;
-    }
-
-    .logo {
-      width: 44px;
-      height: 44px;
-      display: grid;
-      place-items: center;
-      flex: 0 0 44px;
-      background: #24314a;
-      border-radius: 12px;
-      overflow: hidden;
-    }
-
-    .logo img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      padding: 4px;
-    }
-
-    .emoji { font-size: 25px; }
-
-    .name { font-weight: 700; }
-
-    .league {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
-    .state {
-      font-size: 11px;
-      color: #f4c97a;
-      margin-top: 3px;
-    }
-
-    .record {
-      margin-left: auto;
-      text-align: right;
-      font-size: 25px;
-      font-weight: 750;
-      letter-spacing: -.03em;
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-    }
-
-    .record small {
-      display: block;
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--muted);
-      letter-spacing: 0;
-    }
-
-    #status {
-      margin-top: 17px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .bottom {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      flex-wrap: wrap;
-      color: var(--muted);
-      font-size: 11px;
-      margin-top: 8px;
-    }
-
-    @media (max-width: 400px) {
-      main { padding-left: 10px; padding-right: 10px; }
-      .item { padding: 12px; gap: 10px; }
-      .logo { width: 38px; height: 38px; flex-basis: 38px; }
-      .record { font-size: 22px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1020">
+<title>My Sports Records</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#151d30;--line:#29344b;--muted:#9ba9c2;--text:#f4f7ff}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:linear-gradient(145deg,#0b1020,#111a2c);color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:720px;margin:auto;padding:28px 14px 36px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}
+h1{font-size:clamp(25px,6vw,34px);line-height:1.1;margin:0 0 7px;letter-spacing:-.03em}
+.subtitle{color:var(--muted);margin:0;font-size:14px}
+button{border:1px solid #3b4c6b;background:#1b2a42;color:var(--text);padding:10px 12px;border-radius:10px;font:inherit;cursor:pointer}
+button:disabled{opacity:.5}
+.list{display:grid;gap:10px}
+.item{display:flex;align-items:center;gap:13px;padding:15px;background:var(--panel);border:1px solid var(--line);border-radius:14px;min-height:78px}
+.logo{width:44px;height:44px;display:grid;place-items:center;flex:0 0 44px;background:#24314a;border-radius:12px;overflow:hidden}
+.logo img{width:100%;height:100%;object-fit:contain;padding:4px}
+.emoji{font-size:25px}
+.name{font-weight:700}
+.league{font-size:12px;color:var(--muted);margin-top:2px}
+.record{margin-left:auto;text-align:right;font-size:25px;font-weight:750;letter-spacing:-.03em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.record small{display:block;font-size:11px;font-weight:500;color:var(--muted);letter-spacing:0}
+#status{margin-top:17px;color:var(--muted);font-size:12px}
+.bottom{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin-top:8px}
+@media(max-width:400px){main{padding-left:10px;padding-right:10px}.item{padding:12px;gap:10px}.logo{width:38px;height:38px;flex-basis:38px}.record{font-size:22px}}
+</style>
 </head>
-
 <body>
 <main>
-  <header>
-    <div>
-      <h1>My Sports Records</h1>
-      <p class="subtitle">Your favorites. One page. No feed.</p>
-    </div>
-    <button id="refresh">↻ Refresh</button>
-  </header>
+<header>
+<div>
+<h1>My Sports Records</h1>
+<p class="subtitle">Your favorites. One page. No feed.</p>
+</div>
+<button id="refresh">↻ Refresh</button>
+</header>
 
-  <section class="list" id="list" aria-label="Favorite sports records">
+<section class="list" id="list" aria-label="Favorite sports records">
 
-    <article class="item" data-id="bills">
-      <div class="logo">
-        <img src="https://a.espncdn.com/i/teamlogos/nfl/500/buf.png"
-             alt="Buffalo Bills logo"
-             onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'emoji',textContent:'🏈'}))">
-      </div>
-      <div>
-        <div class="name">Buffalo Bills</div>
-        <div class="league">NFL · Regular season</div>
-        <div class="state" id="state-bills"></div>
-      </div>
-      <div class="record" id="bills">Loading…<small>W–L–T</small></div>
-    </article>
+<article class="item">
+<div class="logo"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/buf.png" alt="Bills" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'emoji',textContent:'🏈'}))"></div>
+<div><div class="name">Buffalo Bills</div><div class="league">NFL</div></div>
+<div class="record" id="bills">Loading…<small>W–L–T</small></div>
+</article>
 
-    <article class="item" data-id="blaney">
-      <div class="logo"><span class="emoji">🏁</span></div>
-      <div>
-        <div class="name">Ryan Blaney</div>
-        <div class="league">NASCAR Cup Series</div>
-        <div class="state" id="state-blaney"></div>
-      </div>
-      <div class="record" id="blaney">Loading…<small>wins this season</small></div>
-    </article>
+<article class="item">
+<div class="logo"><span class="emoji">🏁</span></div>
+<div><div class="name">Ryan Blaney</div><div class="league">NASCAR Cup Series</div></div>
+<div class="record" id="blaney">Loading…<small>wins this season</small></div>
+</article>
 
-    <article class="item" data-id="sabres">
-      <div class="logo">
-        <img src="https://a.espncdn.com/i/teamlogos/nhl/500/buf.png"
-             alt="Buffalo Sabres logo"
-             onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'emoji',textContent:'🏒'}))">
-      </div>
-      <div>
-        <div class="name">Buffalo Sabres</div>
-        <div class="league">NHL · Regular season</div>
-        <div class="state" id="state-sabres"></div>
-      </div>
-      <div class="record" id="sabres">Loading…<small>W–L–OTL</small></div>
-    </article>
+<article class="item">
+<div class="logo"><img src="https://a.espncdn.com/i/teamlogos/nhl/500/buf.png" alt="Sabres" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'emoji',textContent:'🏒'}))"></div>
+<div><div class="name">Buffalo Sabres</div><div class="league">NHL</div></div>
+<div class="record" id="sabres">Loading…<small>W–L–OTL</small></div>
+</article>
 
-    <article class="item" data-id="celtics">
-      <div class="logo">
-        <img src="https://a.espncdn.com/i/teamlogos/nba/500/bos.png"
-             alt="Boston Celtics logo"
-             onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'emoji',textContent:'🏀'}))">
-      </div>
-      <div>
-        <div class="name">Boston Celtics</div>
-        <div class="league">NBA · Regular season</div>
-        <div class="state" id="state-celtics"></div>
-      </div>
-      <div class="record" id="celtics">Loading…<small>W–L</small></div>
-    </article>
+<article class="item">
+<div class="logo"><img src="https://a.espncdn.com/i/teamlogos/nba/500/bos.png" alt="Celtics" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'emoji',textContent:'🏀'}))"></div>
+<div><div class="name">Boston Celtics</div><div class="league">NBA</div></div>
+<div class="record" id="celtics">Loading…<small>W–L</small></div>
+</article>
 
-    <article class="item" data-id="jays">
-      <div class="logo">
-        <img src="https://a.espncdn.com/i/teamlogos/mlb/500/tor.png"
-             alt="Toronto Blue Jays logo"
-             onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'emoji',textContent:'⚾'}))">
-      </div>
-      <div>
-        <div class="name">Toronto Blue Jays</div>
-        <div class="league">MLB · Regular season</div>
-        <div class="state" id="state-jays"></div>
-      </div>
-      <div class="record" id="jays">Loading…<small>W–L</small></div>
-    </article>
+<article class="item">
+<div class="logo"><img src="https://a.espncdn.com/i/teamlogos/mlb/500/tor.png" alt="Blue Jays" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'emoji',textContent:'⚾'}))"></div>
+<div><div class="name">Toronto Blue Jays</div><div class="league">MLB</div></div>
+<div class="record" id="jays">Loading…<small>W–L</small></div>
+</article>
 
-    <article class="item" data-id="wvu">
-      <div class="logo">
-        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/277.png"
-             alt="West Virginia Mountaineers logo"
-             onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'emoji',textContent:'🏈'}))">
-      </div>
-      <div>
-        <div class="name">WVU Mountaineers football</div>
-        <div class="league">College football · Regular season</div>
-        <div class="state" id="state-wvu"></div>
-      </div>
-      <div class="record" id="wvu">Loading…<small>W–L</small></div>
-    </article>
+<article class="item">
+<div class="logo"><img src="https://a.espncdn.com/i/teamlogos/ncaa/500/277.png" alt="WVU" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'emoji',textContent:'🏈'}))"></div>
+<div><div class="name">WVU Mountaineers football</div><div class="league">College football</div></div>
+<div class="record" id="wvu">Loading…<small>W–L</small></div>
+</article>
 
-  </section>
+</section>
 
-  <div id="status" role="status">Connecting to sports data…</div>
-  <div class="bottom">
-    <span>Refreshes every 30 minutes</span>
-    <span id="updated">Last checked: —</span>
-  </div>
+<div id="status" role="status">Connecting to sports data…</div>
+<div class="bottom">
+<span>Refreshes every 30 minutes</span>
+<span id="updated">Last checked: —</span>
+</div>
 </main>
 
 <script>
 const $ = id => document.getElementById(id);
 
-const teams = [
-  {
-    id: "bills",
-    sport: "football",
-    league: "nfl",
-    teamCode: "buf",
-    teamId: "2",
-    type: "nfl",
-    label: "W–L–T"
-  },
-  {
-    id: "sabres",
-    sport: "hockey",
-    league: "nhl",
-    teamCode: "buf",
-    teamId: "2",
-    type: "nhl",
-    label: "W–L–OTL"
-  },
-  {
-    id: "celtics",
-    sport: "basketball",
-    league: "nba",
-    teamCode: "bos",
-    teamId: "2",
-    type: "nba",
-    label: "W–L"
-  },
-  {
-    id: "jays",
-    sport: "baseball",
-    league: "mlb",
-    teamCode: "tor",
-    teamId: "14",
-    type: "mlb",
-    label: "W–L"
-  },
-  {
-    id: "wvu",
-    sport: "football",
-    league: "college-football",
-    teamCode: "wv",
-    teamId: "277",
-    type: "cfb",
-    label: "W–L"
-  }
-];
-
 async function fetchJSON(url) {
-  const response = await fetch(url, { cache: "no-store" });
-  if (!response.ok) throw new Error("Data request failed");
+  const response = await fetch(url, {cache:"no-store"});
+  if (!response.ok) throw new Error("Request failed: " + response.status);
   return response.json();
 }
 
-function getEventStatus(event) {
+function setRecord(id, value, label) {
+  $(id).replaceChildren();
+  $(id).append(document.createTextNode(value));
+  const small = document.createElement("small");
+  small.textContent = label;
+  $(id).append(small);
+}
+
+function getStatus(event) {
   const competition = event.competitions?.[0] || event;
   return competition.status?.type || event.status?.type || {};
 }
 
-function getCompletedResult(event, team) {
+function getResult(event, teamId, abbreviation) {
   const competition = event.competitions?.[0] || event;
   const competitors = competition.competitors || [];
 
-  const ours = competitors.find(c => {
-    const id = String(c.team?.id || "");
-    const abbreviation = (c.team?.abbreviation || "").toLowerCase();
-
-    return id === team.teamId || abbreviation === team.teamCode;
-  });
+  const ours = competitors.find(c =>
+    String(c.team?.id || "") === String(teamId) ||
+    (c.team?.abbreviation || "").toLowerCase() === abbreviation
+  );
 
   if (!ours) return null;
 
-  const status = getEventStatus(event);
-  const completed = status.completed || status.state === "post";
-
-  if (!completed) return { completed: false };
+  const status = getStatus(event);
+  if (!(status.completed || status.state === "post")) return null;
 
   const opponent = competitors.find(c => c !== ours);
   const detail = [
     status.detail || "",
     status.shortDetail || "",
-    competition.notes?.map(n => n.headline || "").join(" ") || ""
+    ...(competition.notes || []).map(n => n.headline || "")
   ].join(" ");
 
-  if (ours.winner === true) {
-    return { completed: true, result: "W", detail };
+  if (ours.winner === true) return {result:"W", detail};
+  if (opponent?.winner === true) return {result:"L", detail};
+
+  const a = Number(ours.score);
+  const b = Number(opponent?.score);
+
+  if (Number.isFinite(a) && Number.isFinite(b)) {
+    if (a > b) return {result:"W", detail};
+    if (a < b) return {result:"L", detail};
+    return {result:"T", detail};
   }
 
-  if (opponent?.winner === true) {
-    return { completed: true, result: "L", detail };
-  }
-
-  const ourScore = Number(ours.score);
-  const opponentScore = Number(opponent?.score);
-
-  if (Number.isFinite(ourScore) && Number.isFinite(opponentScore)) {
-    if (ourScore > opponentScore) {
-      return { completed: true, result: "W", detail };
-    }
-
-    if (ourScore < opponentScore) {
-      return { completed: true, result: "L", detail };
-    }
-
-    return { completed: true, result: "T", detail };
-  }
-
-  return { completed: true, result: "L", detail };
+  return null;
 }
 
-async function loadTeam(team) {
-  const record = $(team.id);
-  const state = $("state-" + team.id);
-
+async function loadESPNTeam(config) {
   const url =
-    `https://site.api.espn.com/apis/site/v2/sports/` +
-    `${team.sport}/${team.league}/teams/${team.teamId}/schedule`;
+    `https://site.api.espn.com/apis/site/v2/sports/${config.sport}/${config.league}/teams/${config.teamId}/schedule`;
 
-  try {
-    const data = await fetchJSON(url);
-    const events = data.events || data.team?.events || [];
+  const data = await fetchJSON(url);
+  const events = data.events || data.team?.events || [];
+  if (!events.length) throw new Error("No schedule returned");
 
-    if (!events.length) throw new Error("No schedule found");
+  const results = events
+    .map(event => getResult(event, config.teamId, config.abbreviation))
+    .filter(Boolean);
 
-    const results = events
-      .map(event => getCompletedResult(event, team))
-      .filter(Boolean);
+  let wins = 0, losses = 0, ties = 0, otl = 0;
 
-    const completed = results.filter(result => result.completed);
-
-    let wins = 0;
-    let losses = 0;
-    let ties = 0;
-    let overtimeLosses = 0;
-
-    for (const result of completed) {
-      if (result.result === "W") {
-        wins++;
-      } else if (result.result === "T" && team.type === "nfl") {
-        ties++;
-      } else if (result.result === "L" && team.type === "nhl") {
-        const wasOvertime =
-          /\b(OT|SO|overtime|shootout)\b/i.test(result.detail || "");
-
-        if (wasOvertime) {
-          overtimeLosses++;
-        } else {
-          losses++;
-        }
-      } else if (result.result === "L") {
-        losses++;
-      }
+  for (const result of results) {
+    if (result.result === "W") {
+      wins++;
+    } else if (config.kind === "nhl" && result.result === "L") {
+      if (/\b(OT|SO|overtime|shootout)\b/i.test(result.detail)) otl++;
+      else losses++;
+    } else if (result.result === "L") {
+      losses++;
+    } else if (result.result === "T" && config.kind === "nfl") {
+      ties++;
     }
-
-    let value;
-
-    if (team.type === "nfl") {
-      value = `${wins}–${losses}–${ties}`;
-    } else if (team.type === "nhl") {
-      value = `${wins}–${losses}–${overtimeLosses}`;
-    } else {
-      value = `${wins}–${losses}`;
-    }
-
-    record.innerHTML = `${value}<small>${team.label}</small>`;
-
-    const allGamesComplete = events.every(event => {
-      const status = getEventStatus(event);
-      return status.completed || status.state === "post";
-    });
-
-    const seasonStarted = completed.length > 0;
-    const seasonOver = allGamesComplete && seasonStarted;
-
-    state.textContent = seasonOver
-      ? "Season over"
-      : (!seasonStarted ? "Season not started" : "");
-
-    return { ok: true, ended: seasonOver };
-
-  } catch (error) {
-    record.innerHTML = `Unavailable<small>Data couldn't be loaded</small>`;
-    state.textContent = "";
-    return { ok: false, ended: false };
   }
+
+  let record;
+  if (config.kind === "nfl") record = `${wins}–${losses}–${ties}`;
+  else if (config.kind === "nhl") record = `${wins}–${losses}–${otl}`;
+  else record = `${wins}–${losses}`;
+
+  setRecord(config.id, record, config.label);
 }
 
-function findObjects(root, predicate, results = []) {
-  if (!root || typeof root !== "object") return results;
+async function loadBills() {
+  await loadESPNTeam({
+    id:"bills", sport:"football", league:"nfl",
+    teamId:"2", abbreviation:"buf", kind:"nfl", label:"W–L–T"
+  });
+}
 
-  if (predicate(root)) results.push(root);
+async function loadSabres() {
+  await loadESPNTeam({
+    id:"sabres", sport:"hockey", league:"nhl",
+    teamId:"2", abbreviation:"buf", kind:"nhl", label:"W–L–OTL"
+  });
+}
+
+async function loadCeltics() {
+  await loadESPNTeam({
+    id:"celtics", sport:"basketball", league:"nba",
+    teamId:"2", abbreviation:"bos", kind:"nba", label:"W–L"
+  });
+}
+
+async function loadWVU() {
+  await loadESPNTeam({
+    id:"wvu", sport:"football", league:"college-football",
+    teamId:"277", abbreviation:"wv", kind:"cfb", label:"W–L"
+  });
+}
+
+/* MLB's public Stats API supplies team records directly. */
+async function loadBlueJays() {
+  const year = new Date().getFullYear();
+  const url =
+    `https://statsapi.mlb.com/api/v1/standings?leagueId=103,104&season=${year}&standingsTypes=regularSeason&hydrate=team`;
+
+  const data = await fetchJSON(url);
+  const records = (data.records || []).flatMap(group => group.teamRecords || []);
+  const jays = records.find(entry =>
+    String(entry.team?.id) === "141" ||
+    (entry.team?.name || "").toLowerCase() === "toronto blue jays"
+  );
+
+  if (!jays) throw new Error("Blue Jays not found in standings");
+
+  setRecord("jays", `${jays.wins}–${jays.losses}`, "W–L");
+}
+
+/*
+  ESPN's NASCAR driver data can vary in format.
+  Try the driver profile and statistics endpoints, then look for
+  a current-season wins statistic. Never substitute a fixed number.
+*/
+function findNamedObjects(root, predicate, out = []) {
+  if (!root || typeof root !== "object") return out;
+  if (predicate(root)) out.push(root);
 
   if (Array.isArray(root)) {
-    root.forEach(item => findObjects(item, predicate, results));
+    root.forEach(value => findNamedObjects(value, predicate, out));
   } else {
-    Object.values(root).forEach(item => findObjects(item, predicate, results));
+    Object.values(root).forEach(value => findNamedObjects(value, predicate, out));
+  }
+  return out;
+}
+
+function extractBlaneyWins(data) {
+  const objects = findNamedObjects(data, object => {
+    const name = [
+      object.athlete?.displayName,
+      object.athlete?.fullName,
+      object.driver?.displayName,
+      object.displayName,
+      object.fullName,
+      object.name
+    ].filter(Boolean).join(" ").toLowerCase();
+
+    return name.includes("ryan blaney") &&
+      (Array.isArray(object.stats) ||
+       Array.isArray(object.statistics));
+  });
+
+  for (const object of objects) {
+    const stats = object.stats || object.statistics || [];
+    const winStat = stats.find(stat => {
+      const label = [
+        stat.name, stat.abbreviation,
+        stat.displayName, stat.label
+      ].filter(Boolean).join(" ");
+      return /\bwins?\b/i.test(label);
+    });
+
+    if (winStat && Number.isFinite(Number(winStat.value))) {
+      return Number(winStat.value);
+    }
   }
 
-  return results;
+  // Some ESPN responses contain the driver's statistics without
+  // repeating their name inside each nested stats object.
+  const allStats = findNamedObjects(data, object => {
+    const label = [
+      object.name, object.abbreviation,
+      object.displayName, object.label
+    ].filter(Boolean).join(" ");
+    return /\bwins?\b/i.test(label) &&
+      object.value !== undefined &&
+      Number.isFinite(Number(object.value));
+  });
+
+  if (allStats.length === 1) return Number(allStats[0].value);
+  return null;
 }
 
 async function loadBlaney() {
-  const record = $("blaney");
-  const state = $("state-blaney");
+  const season = new Date().getFullYear();
 
   const urls = [
-    "https://site.api.espn.com/apis/v2/sports/racing/nascar-cup/standings",
-    "https://site.api.espn.com/apis/site/v2/sports/racing/nascar-cup/standings"
+    `https://site.api.espn.com/apis/site/v2/sports/racing/nascar-cup/athletes/4531/statistics?season=${season}`,
+    `https://site.api.espn.com/apis/site/v2/sports/racing/nascar-cup/athletes/4531?season=${season}`,
+    `https://site.api.espn.com/apis/v2/sports/racing/nascar-cup/athletes/4531`
   ];
 
+  for (const url of urls) {
+    try {
+      const data = await fetchJSON(url);
+      const wins = extractBlaneyWins(data);
+
+      if (wins !== null) {
+        setRecord("blaney", String(wins), "wins this season");
+        return;
+      }
+    } catch (error) {
+      // Try the next endpoint.
+    }
+  }
+
+  throw new Error("Could not find current-season driver wins");
+}
+
+async function runOne(name, task) {
   try {
-    let data = null;
-
-    for (const url of urls) {
-      try {
-        data = await fetchJSON(url);
-        break;
-      } catch (error) {
-        // Try the alternate endpoint.
-      }
-    }
-
-    if (!data) throw new Error("NASCAR data unavailable");
-
-    const candidates = findObjects(data, object => {
-      const name = [
-        object.athlete?.displayName,
-        object.athlete?.fullName,
-        object.driver?.displayName,
-        object.team?.displayName,
-        object.displayName,
-        object.name
-      ].filter(Boolean).join(" ").toLowerCase();
-
-      return name.includes("ryan blaney") &&
-        (Array.isArray(object.stats) || Array.isArray(object.statistics));
-    });
-
-    let wins = null;
-
-    for (const candidate of candidates) {
-      const stats = candidate.stats || candidate.statistics || [];
-
-      const winStat = stats.find(stat => {
-        const name = [
-          stat.name,
-          stat.abbreviation,
-          stat.displayName,
-          stat.label
-        ].filter(Boolean).join(" ");
-
-        return /\bwins?\b/i.test(name);
-      });
-
-      if (winStat && Number.isFinite(Number(winStat.value))) {
-        wins = Number(winStat.value);
-        break;
-      }
-    }
-
-    if (wins === null) {
-      throw new Error("Driver wins not found in data");
-    }
-
-    record.innerHTML = `${wins}<small>wins this season</small>`;
-    state.textContent = "";
-
-    return { ok: true, ended: false };
-
+    await task();
+    return true;
   } catch (error) {
-    record.innerHTML = `Unavailable<small>NASCAR data unavailable</small>`;
-    state.textContent = "";
-    return { ok: false, ended: false };
+    console.warn(name + " data failed:", error);
+    setRecord(name, "Unavailable", "Data couldn't be loaded");
+    return false;
   }
 }
 
@@ -549,47 +336,32 @@ async function refreshRecords() {
   $("refresh").disabled = true;
   $("status").textContent = "Updating records…";
 
-  const results = await Promise.all([
-    ...teams.map(loadTeam),
-    loadBlaney()
-  ]);
+  const tasks = [
+    ["bills", loadBills],
+    ["blaney", loadBlaney],
+    ["sabres", loadSabres],
+    ["celtics", loadCeltics],
+    ["jays", loadBlueJays],
+    ["wvu", loadWVU]
+  ];
 
-  const teamResults = results.slice(0, teams.length);
-  const successfulCount = results.filter(result => result.ok).length;
-
-  const activeTeams = teams.filter((team, index) =>
-    !teamResults[index]?.ended
+  const results = await Promise.all(
+    tasks.map(([name, task]) => runOne(name, task))
   );
 
-  const finishedTeams = teams.filter((team, index) =>
-    teamResults[index]?.ended
-  );
+  const count = results.filter(Boolean).length;
+  $("status").textContent = `${count} of 6 records loaded.`;
 
-  const orderedTeams = [...activeTeams, ...finishedTeams];
-  const list = $("list");
-
-  orderedTeams.forEach(team => {
-    const row = document.querySelector(`[data-id="${team.id}"]`);
-    if (row) list.appendChild(row);
-  });
-
-  $("updated").textContent =
-    "Last checked: " +
+  $("updated").textContent = "Last checked: " +
     new Date().toLocaleTimeString([], {
-      hour: "numeric",
-      minute: "2-digit"
+      hour:"numeric", minute:"2-digit"
     });
-
-  $("status").textContent =
-    `${successfulCount} of 6 records loaded. ` +
-    "Finished team seasons move to the bottom when detected.";
 
   $("refresh").disabled = false;
   refreshing = false;
 }
 
 $("refresh").addEventListener("click", refreshRecords);
-
 refreshRecords();
 setInterval(refreshRecords, 30 * 60 * 1000);
 </script>
