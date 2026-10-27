@@ -1,10 +1,10 @@
-const CACHE_NAME = "narwhal-favorite-teams-shell-v1";
+const CACHE_NAME = "narwhal-favorite-teams-shell-v2";
 const APP_URL = new URL("./", self.registration.scope).href;
 const APP_SHELL = [
   APP_URL,
   new URL("./manifest.webmanifest", self.registration.scope).href,
-  new URL("./icons/icon-192.png", self.registration.scope).href,
-  new URL("./icons/icon-512.png", self.registration.scope).href
+  new URL("./icon-192.png", self.registration.scope).href,
+  new URL("./icon-512.png", self.registration.scope).href
 ];
 
 self.addEventListener("install", event => {

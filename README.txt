@@ -1,12 +1,10 @@
-Narwhal's Favorite Teams — Android PWA files
+Narwhal's Favorite Teams — PWA update for the repo as shown in the screenshot
 
-Upload these files to the ROOT of your existing GitHub Pages repository, keeping the icons folder:
-- index.html (replace the current page)
-- manifest.webmanifest
-- sw.js
-- icons/icon-192.png
-- icons/icon-512.png
+The icon PNGs are in the repository root, so these updated files now point to the root icons:
+- index.html (replace the current one)
+- manifest.webmanifest (replace the current one)
+- sw.js (replace the current one)
 
-After GitHub Pages deploys the commit, open the HTTPS site in Chrome on Android. Use ⋮ > Install app (or Install and create shortcut) > Install.
+Keep the existing root files icon-192.png and icon-512.png. Upload the three updated files above to the repository root and commit. After GitHub Pages publishes, reopen the HTTPS site in Chrome, refresh once, wait a few seconds, then choose ⋮ > Install app.
 
-The app shell can open from cache, but live records, schedules, and remote photos need an internet connection. The page refreshes sports data while it is open; it does not run updates in the background.
+The live scores still need internet and refresh only while the page is open.
