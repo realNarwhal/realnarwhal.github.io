@@ -208,7 +208,6 @@ async function loadWVU() {
   });
 }
 
-/* MLB's public Stats API supplies team records directly. */
 async function loadBlueJays() {
   const year = new Date().getFullYear();
   const url =
@@ -227,93 +226,95 @@ async function loadBlueJays() {
 }
 
 /*
-  ESPN's NASCAR driver data can vary in format.
-  Try the driver profile and statistics endpoints, then look for
-  a current-season wins statistic. Never substitute a fixed number.
+  Read the current season's NASCAR Cup scoreboard and count
+  completed points races won by Ryan Blaney.
 */
-function findNamedObjects(root, predicate, out = []) {
-  if (!root || typeof root !== "object") return out;
-  if (predicate(root)) out.push(root);
-
-  if (Array.isArray(root)) {
-    root.forEach(value => findNamedObjects(value, predicate, out));
-  } else {
-    Object.values(root).forEach(value => findNamedObjects(value, predicate, out));
-  }
-  return out;
+function getDriverName(competitor) {
+  return [
+    competitor.athlete?.displayName,
+    competitor.athlete?.fullName,
+    competitor.driver?.displayName,
+    competitor.driver?.fullName,
+    competitor.displayName,
+    competitor.fullName,
+    competitor.name
+  ].filter(Boolean).join(" ").toLowerCase();
 }
 
-function extractBlaneyWins(data) {
-  const objects = findNamedObjects(data, object => {
-    const name = [
-      object.athlete?.displayName,
-      object.athlete?.fullName,
-      object.driver?.displayName,
-      object.displayName,
-      object.fullName,
-      object.name
-    ].filter(Boolean).join(" ").toLowerCase();
+function getFinishingPosition(competitor) {
+  const candidates = [
+    competitor.order,
+    competitor.position,
+    competitor.place,
+    competitor.rank,
+    competitor.stats?.find?.(s =>
+      /^(position|finishing position|place)$/i.test(
+        s.name || s.abbreviation || s.displayName || ""
+      )
+    )?.value
+  ];
 
-    return name.includes("ryan blaney") &&
-      (Array.isArray(object.stats) ||
-       Array.isArray(object.statistics));
-  });
-
-  for (const object of objects) {
-    const stats = object.stats || object.statistics || [];
-    const winStat = stats.find(stat => {
-      const label = [
-        stat.name, stat.abbreviation,
-        stat.displayName, stat.label
-      ].filter(Boolean).join(" ");
-      return /\bwins?\b/i.test(label);
-    });
-
-    if (winStat && Number.isFinite(Number(winStat.value))) {
-      return Number(winStat.value);
-    }
+  for (const value of candidates) {
+    const number = Number(value);
+    if (Number.isFinite(number) && number > 0) return number;
   }
 
-  // Some ESPN responses contain the driver's statistics without
-  // repeating their name inside each nested stats object.
-  const allStats = findNamedObjects(data, object => {
-    const label = [
-      object.name, object.abbreviation,
-      object.displayName, object.label
-    ].filter(Boolean).join(" ");
-    return /\bwins?\b/i.test(label) &&
-      object.value !== undefined &&
-      Number.isFinite(Number(object.value));
-  });
-
-  if (allStats.length === 1) return Number(allStats[0].value);
   return null;
 }
 
 async function loadBlaney() {
-  const season = new Date().getFullYear();
+  const year = new Date().getFullYear();
+  const url =
+    `https://site.api.espn.com/apis/site/v2/sports/racing/nascar-premier/scoreboard?dates=${year}0101-${year}1231`;
 
-  const urls = [
-    `https://site.api.espn.com/apis/site/v2/sports/racing/nascar-cup/athletes/4531/statistics?season=${season}`,
-    `https://site.api.espn.com/apis/site/v2/sports/racing/nascar-cup/athletes/4531?season=${season}`,
-    `https://site.api.espn.com/apis/v2/sports/racing/nascar-cup/athletes/4531`
-  ];
+  const data = await fetchJSON(url);
+  const events = data.events || [];
 
-  for (const url of urls) {
-    try {
-      const data = await fetchJSON(url);
-      const wins = extractBlaneyWins(data);
+  if (!events.length) {
+    throw new Error("No NASCAR Cup races returned");
+  }
 
-      if (wins !== null) {
-        setRecord("blaney", String(wins), "wins this season");
-        return;
-      }
-    } catch (error) {
-      // Try the next endpoint.
+  let wins = 0;
+  let completedRaces = 0;
+
+  for (const event of events) {
+    const competition = event.competitions?.[0] || event;
+    const status = getStatus(event);
+
+    if (!(status.completed || status.state === "post")) continue;
+
+    const eventName = `${event.name || ""} ${event.shortName || ""}`.toLowerCase();
+
+    // Exclude exhibition events and qualifying races from the win count.
+    if (/\b(clash|duel|all-star|qualifying|practice)\b/i.test(eventName)) continue;
+
+    const competitors = competition.competitors || [];
+    if (!competitors.length) continue;
+
+    completedRaces++;
+
+    const blaney = competitors.find(c =>
+      getDriverName(c).includes("ryan blaney")
+    );
+
+    if (!blaney) continue;
+
+    const position = getFinishingPosition(blaney);
+
+    if (blaney.winner === true || position === 1) {
+      wins++;
+    } else if (position === null && blaney.winner !== false) {
+      // Don't display a potentially incorrect total if the result
+      // format doesn't provide enough information to verify the finish.
+      throw new Error("NASCAR results did not include finishing positions");
     }
   }
 
-  throw new Error("Could not find current-season driver wins");
+  if (completedRaces === 0) {
+    throw new Error("No completed NASCAR Cup races could be verified");
+  }
+
+  setRecord("blaney", String(wins), "wins this season");
 }
 
 async function runOne(name, task) {
