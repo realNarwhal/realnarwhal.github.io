@@ -5,6 +5,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0b1020">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Favorite Teams">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
 <title>Narwhal's Favorite Teams</title>
 <style>
 :root{color-scheme:dark;--bg:#0b1020;--panel:#151d30;--line:#29344b;--muted:#9ba9c2;--text:#f4f7ff}
@@ -111,7 +115,7 @@ button:disabled{opacity:.5}
 <div class="bottom">
 <span>Refreshes every minute</span>
 <span id="updated">Last checked: —</span>
-<span>Version 1.6.7</span>
+<span>Version 1.7.0</span>
 </div>
 </main>
 
@@ -609,6 +613,35 @@ function setRandomHeaderPhoto() {
 setRandomHeaderPhoto();
 refreshRecords();
 setInterval(refreshRecords, 60 * 1000);
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(error => console.warn("App install support unavailable:", error));
+  });
+}
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

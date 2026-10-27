@@ -1,11 +1,12 @@
-MY SPORTS RECORDS — ANDROID PWA SOURCE
+Narwhal's Favorite Teams — Android PWA files
 
-This is a small installable web app. Ryan Blaney is intentionally manual and is set to 3 wins.
-The five team records attempt to load from ESPN's undocumented public standings feeds; those feeds can change or fail, and the app reports failures instead of making up records.
+Upload these files to the ROOT of your existing GitHub Pages repository, keeping the icons folder:
+- index.html (replace the current page)
+- manifest.webmanifest
+- sw.js
+- icons/icon-192.png
+- icons/icon-512.png
 
-To install on Android:
-1. Host these files on an HTTPS static host (for example GitHub Pages).
-2. Open the hosted URL in Chrome on Android.
-3. Open Chrome's three-dot menu and choose "Install app" or "Add to Home screen".
+After GitHub Pages deploys the commit, open the HTTPS site in Chrome on Android. Use ⋮ > Install app (or Install and create shortcut) > Install.
 
-Opening index.html directly as a local file will not provide the full installable-app experience.
+The app shell can open from cache, but live records, schedules, and remote photos need an internet connection. The page refreshes sports data while it is open; it does not run updates in the background.
