@@ -5,26 +5,53 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0b1020">
-<title>My Sports Records</title>
+<title>Narwhal's Favorite Teams</title>
 <style>
 :root{color-scheme:dark;--bg:#0b1020;--panel:#151d30;--line:#29344b;--muted:#9ba9c2;--text:#f4f7ff}
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;background:linear-gradient(145deg,#0b1020,#111a2c);color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
 main{max-width:720px;margin:auto;padding:28px 14px 36px}
-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:176px;margin-bottom:22px;padding:22px 18px 40px;position:relative;isolation:isolate;overflow:hidden;border:1px solid var(--line);border-radius:16px;background:#111a2c}
+header::before{content:"";position:absolute;inset:0;z-index:0;background-image:linear-gradient(90deg,rgba(7,12,23,.9) 0%,rgba(7,12,23,.68) 55%,rgba(7,12,23,.34) 100%),linear-gradient(0deg,rgba(7,12,23,.5),transparent 70%),var(--header-image,linear-gradient(145deg,#15233a,#0b1020));background-size:cover,cover,var(--header-image-size,cover);background-position:center,center,var(--header-image-position,center 35%)}
+header>div,header>button{position:relative;z-index:1}
+.header-credit{position:absolute;right:12px;bottom:8px;z-index:1;color:#e1e7f0;font-size:10px;text-decoration:underline;text-underline-offset:2px;text-shadow:0 1px 4px #000}
+@media(max-width:400px){header{min-height:170px;padding:18px 12px 38px}}
 h1{font-size:clamp(25px,6vw,34px);line-height:1.1;margin:0 0 7px;letter-spacing:-.03em}
 .subtitle{color:var(--muted);margin:0;font-size:14px}
 button{border:1px solid #3b4c6b;background:#1b2a42;color:var(--text);padding:10px 12px;border-radius:10px;font:inherit;cursor:pointer}
 button:disabled{opacity:.5}
+.hero{position:relative;height:clamp(180px,34vw,270px);margin:-4px 0 20px;overflow:hidden;border:1px solid var(--line);border-radius:16px;background:#17243b}
+.hero>img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 42%;transition:opacity .35s ease}
+.hero-shade{position:absolute;inset:35% 0 0;background:linear-gradient(transparent,rgba(5,9,18,.86));pointer-events:none}
+.hero-caption{position:absolute;inset:auto 14px 12px;display:flex;align-items:end;justify-content:space-between;gap:12px}
+.hero-caption strong,.hero-caption span{display:block;text-shadow:0 1px 4px #000}
+.hero-caption strong{font-size:18px}
+.hero-caption span{color:#d0d8e7;font-size:11px;margin-top:2px}
+.hero-caption span a{color:inherit}
+.hero-controls{display:flex;gap:6px}
+.hero-controls button{width:36px;height:36px;padding:0;border-radius:50%;background:rgba(17,27,44,.86);font-size:20px;line-height:1}
+.hero-controls button:focus-visible{outline:2px solid #8fb7ff;outline-offset:2px}
+@media(max-width:400px){.hero{margin-top:0}.hero-caption{inset:auto 10px 10px}.hero-caption strong{font-size:16px}}
+@media(prefers-reduced-motion:reduce){.hero>img{transition:none}}
 .list{display:grid;gap:10px}
-.item{display:flex;align-items:center;gap:13px;padding:15px;background:var(--panel);border:1px solid var(--line);border-radius:14px;min-height:78px}
+.item{display:flex;align-items:center;gap:13px;padding:15px;background:var(--panel);border:1px solid var(--line);border-radius:14px;min-height:78px}.item.season-over{filter:grayscale(.88);background:#101725;border-color:#222b3b}
+.item.season-over .name,.item.season-over .league,.item.season-over .record,.item.season-over .record small,.item.season-over .next-game{color:#9aa4b5}
+.item.season-over .next-game{font-weight:700;letter-spacing:.025em}
 .logo{width:44px;height:44px;display:grid;place-items:center;flex:0 0 44px;background:#24314a;border-radius:12px;overflow:hidden}
 .logo img{width:100%;height:100%;object-fit:contain;padding:4px}
+.logo img.gold-mark{filter:brightness(0) saturate(100%) invert(80%) sepia(83%) saturate(704%) hue-rotate(5deg) brightness(103%) contrast(103%)}
+
 .emoji{font-size:25px}
 .name{font-weight:700}
+.item-link{display:block;color:inherit;text-decoration:none}.logo-link{flex:0 0 auto}
+.item-link:focus-visible{outline:2px solid #8fb7ff;outline-offset:3px;border-radius:4px}
+.item-link:hover .name{text-decoration:underline;text-decoration-color:#8fb7ff;text-underline-offset:3px}
 .league{font-size:12px;color:var(--muted);margin-top:2px}
+.item .item-link:not(.logo-link){min-width:0}
+.next-game{font-size:11px;color:#c8d3e3;line-height:1.25;margin-top:4px;max-width:230px;white-space:normal}
 .record{margin-left:auto;text-align:right;font-size:25px;font-weight:750;letter-spacing:-.03em;font-variant-numeric:tabular-nums;white-space:nowrap}
 .record small{display:block;font-size:11px;font-weight:500;color:var(--muted);letter-spacing:0}
+#blaney small{white-space:normal;max-width:145px}
 #status{margin-top:17px;color:var(--muted);font-size:12px}
 .bottom{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin-top:8px}
 @media(max-width:400px){main{padding-left:10px;padding-right:10px}.item{padding:12px;gap:10px}.logo{width:38px;height:38px;flex-basis:38px}.record{font-size:22px}}
@@ -32,49 +59,49 @@ button:disabled{opacity:.5}
 </head>
 <body>
 <main>
-<header>
+<header id="pageHeader">
 <div>
-<h1>Favorite W/L Ratios</h1>
-<p class="subtitle">I'm tired of checking every feed, so here's this!</p>
+<h1>Narwhal's Favorite Teams</h1>
+<p class="subtitle">I'm tired of checking every team on Google for their win/loss ratios, so I made this to do it automatically!</p>
 </div>
-<button id="refresh">↻ Refresh</button>
+<a id="headerPhotoCredit" class="header-credit" target="_blank" rel="noopener noreferrer">Photo credit</a>
 </header>
 
 <section class="list" id="list" aria-label="Favorite sports records">
 
-<article class="item">
-<div class="logo"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/buf.png" alt="Bills" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'emoji',textContent:'🏈'}))"></div>
-<div><div class="name">Buffalo Bills</div><div class="league">NFL</div></div>
+<article class="item" id="card-bills" data-order="1" data-season-over="false">
+<a class="item-link logo-link" href="https://www.espn.com/nfl/team/_/name/buf/buffalo-bills" target="_blank" rel="noopener noreferrer" aria-label="More information about Buffalo Bills"><div class="logo"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/buf.png" alt="Bills" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'emoji',textContent:'🏈'}))"></div></a>
+<a class="item-link" href="https://www.espn.com/nfl/team/_/name/buf/buffalo-bills" target="_blank" rel="noopener noreferrer"><div><div class="name">Buffalo Bills</div><div class="league">NFL</div><div class="next-game" id="next-bills">Loading schedule…</div></div></a>
 <div class="record" id="bills">Loading…<small>W–L–T</small></div>
 </article>
 
-<article class="item">
-<div class="logo"><span class="emoji">🏁</span></div>
-<div><div class="name">Ryan Blaney</div><div class="league">NASCAR Cup Series</div></div>
+<article class="item" id="card-blaney" data-order="2" data-season-over="false">
+<a class="item-link logo-link" href="https://www.nascar.com/drivers/ryan-blaney/" target="_blank" rel="noopener noreferrer" aria-label="More information about Ryan Blaney"><div class="logo"><img src="https://www.nascar.com/wp-content/uploads/sites/7/2026/01/26/12%4010x-350x290.png" alt="Ryan Blaney number 12 logo"></div></a>
+<a class="item-link" href="https://www.nascar.com/drivers/ryan-blaney/" target="_blank" rel="noopener noreferrer"><div><div class="name">Ryan Blaney</div><div class="league">NASCAR Cup Series</div><div class="next-game" id="next-blaney">Loading schedule…</div></div></a>
 <div class="record" id="blaney">Loading…<small>Wins this season</small></div>
 </article>
 
-<article class="item">
-<div class="logo"><img src="https://a.espncdn.com/i/teamlogos/nhl/500/buf.png" alt="Sabres" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'emoji',textContent:'🏒'}))"></div>
-<div><div class="name">Buffalo Sabres</div><div class="league">NHL</div></div>
+<article class="item" id="card-sabres" data-order="3" data-season-over="false">
+<a class="item-link logo-link" href="https://www.espn.com/nhl/team/_/name/buf/buffalo-sabres" target="_blank" rel="noopener noreferrer" aria-label="More information about Buffalo Sabres"><div class="logo"><img src="https://a.espncdn.com/i/teamlogos/nhl/500/buf.png" alt="Sabres" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'emoji',textContent:'🏒'}))"></div></a>
+<a class="item-link" href="https://www.espn.com/nhl/team/_/name/buf/buffalo-sabres" target="_blank" rel="noopener noreferrer"><div><div class="name">Buffalo Sabres</div><div class="league">NHL</div><div class="next-game" id="next-sabres">Loading schedule…</div></div></a>
 <div class="record" id="sabres">Loading…<small>W–L–OTL</small></div>
 </article>
 
-<article class="item">
-<div class="logo"><img src="https://a.espncdn.com/i/teamlogos/nba/500/bos.png" alt="Celtics" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'emoji',textContent:'🏀'}))"></div>
-<div><div class="name">Boston Celtics</div><div class="league">NBA</div></div>
+<article class="item" id="card-celtics" data-order="4" data-season-over="false">
+<a class="item-link logo-link" href="https://www.espn.com/nba/team/_/name/bos/boston-celtics" target="_blank" rel="noopener noreferrer" aria-label="More information about Boston Celtics"><div class="logo"><img src="https://a.espncdn.com/i/teamlogos/nba/500/bos.png" alt="Celtics" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'emoji',textContent:'🏀'}))"></div></a>
+<a class="item-link" href="https://www.espn.com/nba/team/_/name/bos/boston-celtics" target="_blank" rel="noopener noreferrer"><div><div class="name">Boston Celtics</div><div class="league">NBA</div><div class="next-game" id="next-celtics">Loading schedule…</div></div></a>
 <div class="record" id="celtics">Loading…<small>W–L</small></div>
 </article>
 
-<article class="item">
-<div class="logo"><img src="https://a.espncdn.com/i/teamlogos/mlb/500/tor.png" alt="Blue Jays" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'emoji',textContent:'⚾'}))"></div>
-<div><div class="name">Toronto Blue Jays</div><div class="league">MLB</div></div>
+<article class="item" id="card-jays" data-order="5" data-season-over="false">
+<a class="item-link logo-link" href="https://www.espn.com/mlb/team/_/name/tor/toronto-blue-jays" target="_blank" rel="noopener noreferrer" aria-label="More information about Toronto Blue Jays"><div class="logo"><img src="https://a.espncdn.com/i/teamlogos/mlb/500/tor.png" alt="Blue Jays" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'emoji',textContent:'⚾'}))"></div></a>
+<a class="item-link" href="https://www.espn.com/mlb/team/_/name/tor/toronto-blue-jays" target="_blank" rel="noopener noreferrer"><div><div class="name">Toronto Blue Jays</div><div class="league">MLB</div><div class="next-game" id="next-jays">Loading schedule…</div></div></a>
 <div class="record" id="jays">Loading…<small>W–L</small></div>
 </article>
 
-<article class="item">
-<div class="logo"><img src="https://a.espncdn.com/i/teamlogos/ncaa/500/277.png" alt="WVU" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'emoji',textContent:'🏈'}))"></div>
-<div><div class="name">WVU Mountaineers football</div><div class="league">College football</div></div>
+<article class="item" id="card-wvu" data-order="6" data-season-over="false">
+<a class="item-link logo-link" href="https://www.espn.com/college-football/team/_/id/277/west-virginia-mountaineers" target="_blank" rel="noopener noreferrer" aria-label="More information about WVU Mountaineers football"><div class="logo"><img src="https://a.espncdn.com/i/teamlogos/ncaa/500/277.png" alt="WVU logo" class="gold-mark" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'emoji',textContent:'🏈'}))"></div></a>
+<a class="item-link" href="https://www.espn.com/college-football/team/_/id/277/west-virginia-mountaineers" target="_blank" rel="noopener noreferrer"><div><div class="name">WVU Mountaineers football</div><div class="league">College football</div><div class="next-game" id="next-wvu">Loading schedule…</div></div></a>
 <div class="record" id="wvu">Loading…<small>W–L</small></div>
 </article>
 
@@ -82,8 +109,9 @@ button:disabled{opacity:.5}
 
 <div id="status" role="status">Connecting to sports data…</div>
 <div class="bottom">
-<span>Refreshes every 30 minutes</span>
+<span>Refreshes every minute</span>
 <span id="updated">Last checked: —</span>
+<span>Version 1.6.7</span>
 </div>
 </main>
 
@@ -104,6 +132,109 @@ function setRecord(id, value, label) {
   $(id).append(small);
 }
 
+function setSchedule(id, text) {
+  const target = $("next-" + id);
+  if (target) target.textContent = text;
+}
+
+function setSeasonOver(id, isOver, label = "Season over") {
+  const card = $("card-" + id);
+  if (!card) return;
+  card.classList.toggle("season-over", isOver);
+  card.dataset.seasonOver = isOver ? "true" : "false";
+  if (isOver) setSchedule(id, label);
+  const cards = Array.from($("list").querySelectorAll(".item"));
+  cards.sort((a, b) => {
+    const aOver = a.dataset.seasonOver === "true" ? 1 : 0;
+    const bOver = b.dataset.seasonOver === "true" ? 1 : 0;
+    return aOver - bOver || Number(a.dataset.order) - Number(b.dataset.order);
+  });
+  cards.forEach(item => $("list").appendChild(item));
+}
+function formatEventDate(value) {
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return "time TBD";
+  return date.toLocaleString([], {weekday:"short", month:"short", day:"numeric", hour:"numeric", minute:"2-digit"});
+}
+
+function getTeamSides(event, config) {
+  const competition = event.competitions?.[0] || event;
+  const competitors = competition.competitors || [];
+  const ours = competitors.find(c =>
+    String(c.team?.id || "") === String(config.teamId) ||
+    (c.team?.abbreviation || "").toLowerCase() === config.abbreviation
+  );
+  const opponent = competitors.find(c => c !== ours);
+  return {competition, ours, opponent};
+}
+
+function updateTeamNextGame(events, config) {
+  const now = Date.now();
+  const completed = events.filter(event => {
+    const status = getStatus(event);
+    return status.completed || status.state === "post";
+  });
+  const remaining = events.filter(event => {
+    const status = getStatus(event);
+    return !(status.completed || status.state === "post" || /cancel/i.test(status.name || ""));
+  });
+  const live = remaining.find(event => getStatus(event).state === "in");
+  const upcoming = remaining.filter(event => {
+    const date = new Date(event.date || event.competitions?.[0]?.date || 0).getTime();
+    return Number.isFinite(date) && date >= now;
+  }).sort((a, b) => new Date(a.date || a.competitions?.[0]?.date) - new Date(b.date || b.competitions?.[0]?.date))[0];
+  if (completed.length > 0 && remaining.length === 0) {
+    setSeasonOver(config.id, true);
+    return;
+  }
+  setSeasonOver(config.id, false);
+  const event = live || upcoming;
+  if (!event) {
+    setSchedule(config.id, remaining.length ? "Game date: TBD" : "Next game: schedule TBD");
+    return;
+  }
+  const {ours, opponent} = getTeamSides(event, config);
+  const opponentName = opponent?.team?.abbreviation || opponent?.team?.shortDisplayName || opponent?.team?.displayName || "Opponent TBD";
+  const side = ours?.homeAway === "away" ? "at" : "vs";
+  const date = formatEventDate(event.date || event.competitions?.[0]?.date);
+  if (live) {
+    const score = ours?.score != null && opponent?.score != null ? ` · ${ours.score}–${opponent.score}` : "";
+    setSchedule(config.id, `Live ${side} ${opponentName}${score} · ${date}`);
+  } else {
+    setSchedule(config.id, `Next ${side} ${opponentName} · ${date}`);
+  }
+}
+
+function updateBlaneyNextRace(events) {
+  const now = Date.now();
+  const pointRaces = events.filter(event => !/\b(clash|duel|all-star|qualifying|practice)\b/i.test(`${event.name || ""} ${event.shortName || ""}`));
+  const liveRace = pointRaces.find(event => getStatus(event).state === "in");
+  const nextRace = pointRaces.filter(event => {
+    const date = new Date(event.date || 0).getTime();
+    const status = getStatus(event);
+    return date >= now && !(status.completed || status.state === "post");
+  }).sort((a, b) => new Date(a.date) - new Date(b.date))[0];
+  const completedRaces = pointRaces.filter(event => {
+    const status = getStatus(event);
+    return status.completed || status.state === "post";
+  });
+  if (!liveRace && !nextRace && completedRaces.length > 0) {
+    setSeasonOver("blaney", true);
+    return;
+  }
+  setSeasonOver("blaney", false);
+  const event = liveRace || nextRace;
+  if (!event) {
+    setSchedule("blaney", "Next race: schedule TBD");
+    return;
+  }
+  const venue = event.venue || event.competitions?.[0]?.venue || {};
+  const address = venue.address || {};
+  const location = [address.city, address.state || address.country].filter(Boolean).join(", ");
+  const track = venue.fullName || venue.shortName || venue.name || event.name || "Track TBD";
+  if (liveRace) setSchedule("blaney", `Race in progress: ${track}${location ? ` · ${location}` : ""}`);
+  else setSchedule("blaney", `Next race: ${track}${location ? ` · ${location}` : ""} · ${formatEventDate(event.date)}`);
+}
 function getStatus(event) {
   const competition = event.competitions?.[0] || event;
   return competition.status?.type || event.status?.type || {};
@@ -153,6 +284,8 @@ async function loadESPNTeam(config) {
   const events = data.events || data.team?.events || [];
   if (!events.length) throw new Error("No schedule returned");
 
+  updateTeamNextGame(events, config);
+
   const results = events
     .map(event => getResult(event, config.teamId, config.abbreviation))
     .filter(Boolean);
@@ -173,11 +306,14 @@ async function loadESPNTeam(config) {
   }
 
   let record;
-  if (config.kind === "nfl") record = `${wins}–${losses}–${ties}`;
-  else if (config.kind === "nhl") record = `${wins}–${losses}–${otl}`;
+  let label = config.label;
+  if (config.kind === "nfl") {
+    record = ties > 0 ? `${wins}–${losses}–${ties}` : `${wins}–${losses}`;
+    label = ties > 0 ? "W–L–T" : "W–L";
+  } else if (config.kind === "nhl") record = `${wins}–${losses}–${otl}`;
   else record = `${wins}–${losses}`;
 
-  setRecord(config.id, record, config.label);
+  setRecord(config.id, record, label);
 }
 
 async function loadBills() {
@@ -208,6 +344,45 @@ async function loadWVU() {
   });
 }
 
+async function loadBlueJaysSchedule() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const startDate = `${year}-01-01`;
+  const endDate = `${year}-12-31`;
+  const url = `https://statsapi.mlb.com/api/v1/schedule?sportId=1&teamId=141&startDate=${startDate}&endDate=${endDate}&gameType=R&hydrate=team`;
+  const data = await fetchJSON(url);
+  const games = (data.dates || []).flatMap(day => day.games || []);
+  const completed = games.filter(game => game.status?.abstractGameState === "Final");
+  const remaining = games.filter(game => game.status?.abstractGameState !== "Final");
+  const live = remaining.find(game => game.status?.abstractGameState === "Live");
+  const upcoming = remaining.filter(game => {
+    const date = new Date(game.gameDate || 0).getTime();
+    return date >= Date.now();
+  }).sort((a, b) => new Date(a.gameDate) - new Date(b.gameDate))[0];
+  const game = live || upcoming;
+  if (!game && completed.length > 0 && remaining.length === 0) {
+    setSeasonOver("jays", true, "Regular season over");
+    return;
+  }
+  setSeasonOver("jays", false);
+  if (!game) {
+    setSchedule("jays", "Next game: schedule TBD");
+    return;
+  }
+  const home = game.teams?.home;
+  const away = game.teams?.away;
+  const torontoHome = String(home?.team?.id || "") === "141";
+  const opponent = torontoHome ? away : home;
+  const opponentName = opponent?.team?.abbreviation || opponent?.team?.name || "Opponent TBD";
+  const date = formatEventDate(game.gameDate);
+  if (live) {
+    const ours = torontoHome ? home : away;
+    const score = ours?.score != null && opponent?.score != null ? ` · ${ours.score}–${opponent.score}` : "";
+    setSchedule("jays", `Live ${torontoHome ? "vs" : "at"} ${opponentName}${score} · ${date}`);
+  } else {
+    setSchedule("jays", `Next ${torontoHome ? "vs" : "at"} ${opponentName} · ${date}`);
+  }
+}
 async function loadBlueJays() {
   const year = new Date().getFullYear();
   const url =
@@ -223,6 +398,7 @@ async function loadBlueJays() {
   if (!jays) throw new Error("Blue Jays not found in standings");
 
   setRecord("jays", `${jays.wins}–${jays.losses}`, "W–L");
+  try { await loadBlueJaysSchedule(); } catch (error) { setSeasonOver("jays", false); setSchedule("jays", "Schedule unavailable"); console.warn("Blue Jays schedule failed:", error); }
 }
 
 /*
@@ -274,6 +450,8 @@ async function loadBlaney() {
     throw new Error("No NASCAR Cup races returned");
   }
 
+  updateBlaneyNextRace(events);
+
   let wins = 0;
   let completedRaces = 0;
 
@@ -315,6 +493,7 @@ async function loadBlaney() {
   }
 
   setRecord("blaney", String(wins), "wins this season");
+
 }
 
 async function runOne(name, task) {
@@ -323,6 +502,8 @@ async function runOne(name, task) {
     return true;
   } catch (error) {
     console.warn(name + " data failed:", error);
+    setSeasonOver(name, false);
+    setSchedule(name, "Schedule unavailable");
     setRecord(name, "Unavailable", "Data couldn't be loaded");
     return false;
   }
@@ -334,7 +515,6 @@ async function refreshRecords() {
   if (refreshing) return;
 
   refreshing = true;
-  $("refresh").disabled = true;
   $("status").textContent = "Updating records…";
 
   const tasks = [
@@ -358,13 +538,77 @@ async function refreshRecords() {
       hour:"numeric", minute:"2-digit"
     });
 
-  $("refresh").disabled = false;
   refreshing = false;
 }
 
-$("refresh").addEventListener("click", refreshRecords);
+const heroPhotos = [
+  {team:"Buffalo Bills", alt:"Bills players celebrating in the end zone", image:"https://static.clubs.nfl.com/image/upload/t_landscape_tablet/bills/rqcmpvzfpe5vueskitd5.jpg", source:"Buffalo Bills", page:"https://www.buffalobills.com/news/unbelievable-group-to-be-a-part-of-bills-players-share-lessons-from-2024-season-look-ahead-to-2025"},
+  {team:"Buffalo Bills", alt:"Bills players celebrating a touchdown", image:"https://static.clubs.nfl.com/image/upload/t_new_photo_album/bills/deyxjaaymk913c3brqe2.jpg", source:"Buffalo Bills", page:"https://www.buffalobills.com/photos/bills-win-must-see-photos-from-bills-victory-over-cardinals"},
+  {team:"Buffalo Bills", alt:"Bills players celebrating in the end zone", image:"https://a4.espncdn.com/combiner/i?img=%2Fphoto%2F2024%2F1126%2Fr1420036_1296x729_16-9.jpg", source:"ESPN", page:"https://www.espn.com/nfl/story/_/id/42625528/buffalo-bills-quest-afc-east-crown-no-1-seed-continues"},
+  {team:"Buffalo Sabres", alt:"Sabres players celebrating a playoff goal", image:"https://s.yimg.com/lo/mysterio/api/2069EC75427B6FD760D7975685EAACDF9B25C9D8B9674E35E04765AFD3C1B8D4/subgraphmysterio/resizefill_w976_h549%3Bquality_80%3Bformat_webp/https%3A%2F%2Fmedia.zenfs.com%2Fen%2Faol_fox_news_articles_947%2F09cb91a45ec78c673d1d8b4ba27939c5", source:"AOL Sports", page:"https://www.aol.com/articles/buffalo-sabres-star-tage-thompson-205105013.html"},
+  {team:"Buffalo Sabres", alt:"Sabres players celebrating a goal", image:"https://img.championat.com/i/a/u/1771928423191396481.jpg", source:"Championat", page:"https://www.championat.com/hockey/article-6370602-glavnye-intrigi-konca-sezona-2025-2026-nhl-florida-vasilevskij-shestyorkin-sorokin-vezina-kucherov-art-ross-demidov.html"},
+  {team:"Buffalo Sabres", alt:"Sabres players celebrating against the boards", image:"https://www.audacy.com/media-library/image.jpg?coordinates=0%2C104%2C0%2C104&height=700&id=65577097&quality=70&width=1245", source:"Audacy", page:"https://www.audacy.com/wben/news/local/game-2-preview-sabres-look-to-carry-momentum-from-emotional-game-1-win"},
+  {team:"Toronto Blue Jays", alt:"Blue Jays celebrating their 2025 American League title", image:"https://pbs.twimg.com/media/G3wSWloXoAA_oN2.jpg", source:"Sportsnet", page:"https://x.com/SNstats/status/1980478145527706002"},
+  {team:"Toronto Blue Jays", alt:"Blue Jays celebrating on the field", image:"https://res.cloudinary.com/ybmedia/image/upload/c_crop%2Ce_improve%2Ch_1123%2Cw_2000%2Cx_0%2Cy_58/c_fill%2Cf_auto%2Ch_900%2Cq_auto%2Cw_1600/v1/m/2/0/2096a33c226e2e354688596d109f64747a521b1e/dodgers-blue-jays-five-2025-world-series.jpg", source:"Yardbarker", page:"https://www.yardbarker.com/mlb/articles/dodgers_blue_jays_five_2025_world_series_storylines_to_follow/s1_13132_42932032"},
+  {team:"Toronto Blue Jays", alt:"Blue Jays celebrating their ALDS win", image:"https://a57.foxsports.com/statics.foxsports.com/www.foxsports.com/content/uploads/2025/10/0/0/bluejayschamps-scaled.jpg?tl=1&ve=1", source:"FOX Sports", page:"https://www.foxsports.com/stories/mlb/again-yankees-didnt-execute-when-needed-to-season-ending-loss-blue-jays"},
+  {team:"Boston Celtics", alt:"Celtics celebrating their 18th NBA championship", image:"https://assets.bwbx.io/images/users/iqjWHBFdfxIU/iq3K7rWqUoVU/v1/-1x-1.webp", source:"Bloomberg", page:"https://www.bloomberg.com/news/articles/2025-04-24/sports-team-ownership-is-a-private-equity-game-now"},
+  {team:"Boston Celtics", alt:"Celtics players celebrating at the White House", image:"https://d3i6fh83elv35t.cloudfront.net/static/2024/11/GettyImages-2157576685-1024x681.jpg", source:"PBS News", page:"https://www.pbs.org/newshour/nation/watch-live-white-house-hosts-nba-champions-boston-celtics"},
+  {team:"Boston Celtics", alt:"Celtics celebrating their NBA Finals victory", image:"https://a57.foxsports.com/statics.foxsports.com/www.foxsports.com/content/uploads/2024/06/768/432/celtics.jpg?tl=1&ve=1", source:"FOX Sports", page:"https://www.foxsports.com/stories/nba/celtics-show-strength-depth-en-route-winning-nba-finals"},
+  {team:"Ryan Blaney", alt:"Ryan Blaney celebrating a NASCAR Cup Series win", image:"https://athlonsports.com/.image/c_fill%2Cw_1200%2Ch_675%2Cg_faces%3Acenter/MjY6MDAwMDAwMDAxMDkxMzc5/ryan-blaney-phoenix-victory-lane-1091379.jpg", source:"Athlon Sports", page:"https://athlonsports.com/racing/nascar/cup-series-phoenix-straight-talk-wireless-500-2026"},
+  {team:"Ryan Blaney", alt:"Ryan Blaney celebrating in Victory Lane", image:"https://statics.foxsports.com/www.foxsports.com/content/uploads/2026/03/gettyimages-2265493626-scaled.jpg", source:"FOX Sports", page:"https://www.foxsports.com/stories/nascar/ryan-blaney-laughs-surprise-radio"},
+  {team:"Ryan Blaney", alt:"Ryan Blaney celebrating his Michigan win", image:"https://cdn-1.motorsport.com/images/amp/YBeJmdl2/s6/race-winner-ryan-blaney-team-p.jpg", source:"Motorsport.com", page:"https://www.autosport.com/nascar/news/ryan-blaney-charges-to-michigan-cup-win-over-byron/6652242/"},
+  {team:"WVU Mountaineers Football", alt:"Mountaineers celebrating a touchdown against Colorado", image:"https://images.sidearmdev.com/resize?type=jpeg&url=https%3A%2F%2Fdxbhsrqyrr690.cloudfront.net%2Fsidearm.nextgen.sites%2Fwvuni.sidearmsports.com%2Fimages%2F2025%2F11%2F8%2F22_GAMEACTION_WVU_CU_DBo9y.jpg&width=1600", source:"WVU Athletics", page:"https://wvusports.com/news/2025/11/10/football-sophomore-linebacker-jones-embracing-dual-role"},
+  {team:"WVU Mountaineers Football", alt:"Mountaineers celebrating a touchdown against Pitt", image:"https://images.sidearmdev.com/resize?type=jpeg&url=https%3A%2F%2Fdxbhsrqyrr690.cloudfront.net%2Fsidearm.nextgen.sites%2Fwvuni.sidearmsports.com%2Fimages%2F2025%2F9%2F13%2F20250913_FBvsPITT-85_Tiqs3.jpg&width=1600", source:"WVU Athletics", page:"https://wvusports.com/news/2025/9/13/football-mountaineers-win-backyard-brawl-overtime-thriller.aspx"},
+  {team:"WVU Mountaineers Football", alt:"Mountaineers celebrating a touchdown in the end zone", image:"https://images2.minutemediacdn.com/image/upload/c_fill%2Cw_1440%2Car_16%3A9%2Cf_auto%2Cq_auto%2Cg_auto/images/voltaxMediaLibrary/mmsport/mountaineers_now/01k3y903j3wwpjrd51r0.jpg", source:"Sports Illustrated", page:"https://www.si.com/college/westvirginia/football/stock-up-stock-down-evaluating-key-performances-in-wvu-s-win-over-robert-morris"}
+];
+let selectedHeaderPhotoIndex = -1;
+const headerPhotoQueueKey = "narwhals-favorite-teams-photo-queue";
+const lastHeaderPhotoKey = "narwhals-favorite-teams-last-photo";
+function shuffledHeaderPhotoIndices() {
+  const indices = heroPhotos.map((_, index) => index);
+  for (let i = indices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indices[i], indices[j]] = [indices[j], indices[i]];
+  }
+  return indices;
+}
+function nextHeaderPhotoIndex() {
+  try {
+    let queue = JSON.parse(localStorage.getItem(headerPhotoQueueKey) || "[]");
+    const last = Number(localStorage.getItem(lastHeaderPhotoKey));
+    if (!Array.isArray(queue)) queue = [];
+    queue = queue.filter((index, position, values) =>
+      Number.isInteger(index) && index >= 0 && index < heroPhotos.length && values.indexOf(index) === position
+    );
+    if (!queue.length) {
+      queue = shuffledHeaderPhotoIndices();
+      if (queue.length > 1 && queue[0] === last) {
+        [queue[0], queue[1]] = [queue[1], queue[0]];
+      }
+    }
+    const next = queue.shift();
+    localStorage.setItem(headerPhotoQueueKey, JSON.stringify(queue));
+    localStorage.setItem(lastHeaderPhotoKey, String(next));
+    return next;
+  } catch (error) {
+    return Math.floor(Math.random() * heroPhotos.length);
+  }
+}
+function setRandomHeaderPhoto() {
+  selectedHeaderPhotoIndex = nextHeaderPhotoIndex();
+  const photo = heroPhotos[selectedHeaderPhotoIndex];
+  const pageHeader = $("pageHeader");
+  pageHeader.style.setProperty("--header-image", 'url("' + photo.image.replaceAll('"', '\\"') + '")');
+  pageHeader.style.setProperty("--header-image-position", photo.position || "center 35%");
+  pageHeader.style.setProperty("--header-image-size", photo.team === "Buffalo Bills" ? "115% auto" : "cover");
+  const credit = $("headerPhotoCredit");
+  credit.href = photo.page;
+  credit.textContent = "Photo: " + photo.source;
+  credit.setAttribute("aria-label", "Photo credit for " + photo.alt + " from " + photo.source);
+}
+setRandomHeaderPhoto();
 refreshRecords();
-setInterval(refreshRecords, 30 * 60 * 1000);
+setInterval(refreshRecords, 60 * 1000);
 </script>
 </body>
 </html>
