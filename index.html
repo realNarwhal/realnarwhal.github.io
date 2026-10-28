@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="MySports HQ">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icon-192.png">
-<title>MySports HQ</title>
+<title>Narwhal's Favorite Teams</title>
 <style>
 :root{color-scheme:dark;--bg:#0b1020;--panel:#151d30;--line:#29344b;--muted:#9ba9c2;--text:#f4f7ff}
 *{box-sizing:border-box}
@@ -65,7 +64,7 @@ button:disabled{opacity:.5}
 <main>
 <header id="pageHeader">
 <div>
-<h1>Narwhal's Favorite Teams!</h1>
+<h1>Narwhal's Favorite Teams</h1>
 <p class="subtitle">I'm tired of checking every team on Google for their win/loss ratios, so I made this to do it automatically!</p>
 </div>
 <a id="headerPhotoCredit" class="header-credit" target="_blank" rel="noopener noreferrer">Photo credit</a>
@@ -113,9 +112,9 @@ button:disabled{opacity:.5}
 
 <div id="status" role="status">Connecting to sports data…</div>
 <div class="bottom">
-<span>Refreshes every minute</span>
+<span>Refreshes every 15 seconds</span>
 <span id="updated">Last checked: —</span>
-<span>Version 1.8.1</span>
+<span>Version 1.8.5</span>
 </div>
 </main>
 
@@ -155,10 +154,16 @@ function setSeasonOver(id, isOver, label = "Season over") {
   });
   cards.forEach(item => $("list").appendChild(item));
 }
-function formatEventDate(value) {
+function formatEventDate(value, timeValid = true) {
   const date = new Date(value);
   if (!Number.isFinite(date.getTime())) return "time TBD";
-  return date.toLocaleString([], {weekday:"short", month:"short", day:"numeric", hour:"numeric", minute:"2-digit"});
+  const options = {weekday:"short", month:"short", day:"numeric"};
+  if (timeValid) {
+    options.hour = "numeric";
+    options.minute = "2-digit";
+  }
+  const formatted = date.toLocaleString([], options);
+  return timeValid ? formatted : formatted + " · time TBD";
 }
 
 function getTeamSides(event, config) {
@@ -170,6 +175,16 @@ function getTeamSides(event, config) {
   );
   const opponent = competitors.find(c => c !== ours);
   return {competition, ours, opponent};
+}
+
+function getScoreText(score) {
+  let value = score;
+  for (let i = 0; i < 4 && value && typeof value === "object"; i++) {
+    const next = value.displayValue ?? value.value ?? value.score ?? value.current;
+    if (next == null || next === value) return "";
+    value = next;
+  }
+  return value == null || typeof value === "object" ? "" : String(value).trim();
 }
 
 function updateTeamNextGame(events, config) {
@@ -200,9 +215,14 @@ function updateTeamNextGame(events, config) {
   const {ours, opponent} = getTeamSides(event, config);
   const opponentName = opponent?.team?.abbreviation || opponent?.team?.shortDisplayName || opponent?.team?.displayName || "Opponent TBD";
   const side = ours?.homeAway === "away" ? "at" : "vs";
-  const date = formatEventDate(event.date || event.competitions?.[0]?.date);
+  const timeValid = event.timeValid !== false && event.competitions?.[0]?.timeValid !== false;
+  const date = formatEventDate(event.date || event.competitions?.[0]?.date, timeValid);
   if (live) {
-    const score = ours?.score != null && opponent?.score != null ? ` · ${ours.score}–${opponent.score}` : "";
+    const oursScore = getScoreText(ours?.score);
+    const opponentScore = getScoreText(opponent?.score);
+    const ourLabel = ours?.team?.abbreviation || config.abbreviation.toUpperCase();
+    const opponentLabel = opponent?.team?.abbreviation || opponentName;
+    const score = oursScore && opponentScore ? ` · ${ourLabel} ${oursScore}–${opponentScore} ${opponentLabel}` : "";
     setSchedule(config.id, `Live ${side} ${opponentName}${score} · ${date}`);
   } else {
     setSchedule(config.id, `Next ${side} ${opponentName} · ${date}`);
@@ -268,8 +288,8 @@ function getResult(event, teamId, abbreviation) {
   if (ours.winner === true) return {result:"W", detail};
   if (opponent?.winner === true) return {result:"L", detail};
 
-  const a = Number(ours.score);
-  const b = Number(opponent?.score);
+  const a = Number(getScoreText(ours.score));
+  const b = Number(getScoreText(opponent?.score));
 
   if (Number.isFinite(a) && Number.isFinite(b)) {
     if (a > b) return {result:"W", detail};
@@ -280,6 +300,30 @@ function getResult(event, teamId, abbreviation) {
   return null;
 }
 
+async function loadLiveScores(events, config) {
+  const liveEvent = events.find(event => getStatus(event).state === "in");
+  if (!liveEvent?.id) return;
+
+  try {
+    const summaryUrl = `https://site.api.espn.com/apis/site/v2/sports/${config.sport}/${config.league}/summary?event=${encodeURIComponent(liveEvent.id)}`;
+    const summary = await fetchJSON(summaryUrl);
+    const summaryCompetition = summary.header?.competitions?.find(competition =>
+      String(competition.id) === String(liveEvent.id)
+    ) || summary.header?.competitions?.[0];
+    const scheduleCompetition = liveEvent.competitions?.[0] || liveEvent;
+
+    for (const team of scheduleCompetition.competitors || []) {
+      const scoredTeam = summaryCompetition?.competitors?.find(candidate =>
+        String(candidate.id || candidate.team?.id || "") === String(team.id || team.team?.id || "") ||
+        (candidate.team?.abbreviation || "").toLowerCase() === (team.team?.abbreviation || "").toLowerCase()
+      );
+      if (scoredTeam?.score != null) team.score = scoredTeam.score;
+    }
+  } catch {
+    // Keep showing the live matchup if ESPN's separate score summary is temporarily unavailable.
+  }
+}
+
 async function loadESPNTeam(config) {
   const url =
     `https://site.api.espn.com/apis/site/v2/sports/${config.sport}/${config.league}/teams/${config.teamId}/schedule`;
@@ -288,6 +332,7 @@ async function loadESPNTeam(config) {
   const events = data.events || data.team?.events || [];
   if (!events.length) throw new Error("No schedule returned");
 
+  await loadLiveScores(events, config);
   updateTeamNextGame(events, config);
 
   const results = events
@@ -602,7 +647,7 @@ function setRandomHeaderPhoto() {
   selectedHeaderPhotoIndex = nextHeaderPhotoIndex();
   const photo = heroPhotos[selectedHeaderPhotoIndex];
   const pageHeader = $("pageHeader");
-  pageHeader.style.setProperty("--header-image", 'url("' + photo.image.replaceAll('"', '\\"') + '")');
+  pageHeader.style.setProperty("--header-image", 'url("' + photo.image.replaceAll('"', '\\\"') + '")');
   pageHeader.style.setProperty("--header-image-position", photo.position || "center 35%");
   pageHeader.style.setProperty("--header-image-size", photo.team === "Buffalo Bills" ? "115% auto" : "cover");
   const credit = $("headerPhotoCredit");
@@ -611,8 +656,16 @@ function setRandomHeaderPhoto() {
   credit.setAttribute("aria-label", "Photo credit for " + photo.alt + " from " + photo.source);
 }
 setRandomHeaderPhoto();
-refreshRecords();
-setInterval(refreshRecords, 60 * 1000);
+let refreshTimer;
+function scheduleNextRefresh() {
+  clearTimeout(refreshTimer);
+  refreshTimer = setTimeout(async () => {
+    await refreshRecords();
+    scheduleNextRefresh();
+  }, 15 * 1000);
+}
+
+refreshRecords().then(scheduleNextRefresh);
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("./sw.js").catch(error => console.warn("App install support unavailable:", error));
@@ -621,28 +674,3 @@ if ("serviceWorker" in navigator) {
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
